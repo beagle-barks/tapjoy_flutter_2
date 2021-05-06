@@ -5,17 +5,17 @@ import 'package:flutter_tapjoy/tj_placement.dart';
 class Tapjoy {
   static const MethodChannel _channel = const MethodChannel('tapjoy');
 
-  static Function connectSuccess;
-  static Function connectFail;
-  static Function onLimitedConnectSuccess;
-  static Function onLimitedConnectFailure;
-  static Function onGetCurrencyBalanceResponse;
-  static Function onGetCurrencyBalanceResponseFailure;
-  static Function onAwardCurrencyResponse;
-  static Function onAwardCurrencyResponseFailure;
-  static Function onEarnedCurrency;
-  static Function onSpendCurrencyResponse;
-  static Function onSpendCurrencyResponseFailure;
+  static Function? connectSuccess;
+  static Function? connectFail;
+  static Function? onLimitedConnectSuccess;
+  static Function? onLimitedConnectFailure;
+  static Function? onGetCurrencyBalanceResponse;
+  static Function? onGetCurrencyBalanceResponseFailure;
+  static Function? onAwardCurrencyResponse;
+  static Function? onAwardCurrencyResponseFailure;
+  static Function? onEarnedCurrency;
+  static Function? onSpendCurrencyResponse;
+  static Function? onSpendCurrencyResponseFailure;
 
   static void connect(
       String tapjoyKey, Function connectSuccessFunc, Function connectFailFunc) {
@@ -26,49 +26,50 @@ class Tapjoy {
       switch (methodCall.method) {
         case 'connect':
           if (methodCall.arguments == "success") {
-            if (connectSuccess != null) connectSuccess();
+            if (connectSuccess != null) connectSuccess!();
           } else {
-            if (connectFail != null) connectFail();
+            if (connectFail != null) connectFail!();
           }
           break;
         case 'onLimitedConnectSuccess':
-          if (onLimitedConnectSuccess != null) onLimitedConnectSuccess();
+          if (onLimitedConnectSuccess != null) onLimitedConnectSuccess!();
 
           break;
         case 'onLimitedConnectFailure':
-          if (onLimitedConnectFailure != null) onLimitedConnectFailure();
+          if (onLimitedConnectFailure != null) onLimitedConnectFailure!();
 
           break;
         case 'onGetCurrencyBalanceResponse':
           if (onGetCurrencyBalanceResponse != null)
-            onGetCurrencyBalanceResponse(methodCall.arguments);
+            onGetCurrencyBalanceResponse!(methodCall.arguments);
           break;
         case 'onGetCurrencyBalanceResponseFailure':
           if (onGetCurrencyBalanceResponseFailure != null)
-            onGetCurrencyBalanceResponseFailure();
+            onGetCurrencyBalanceResponseFailure!();
           break;
         case 'onAwardCurrencyResponse':
-          if (onAwardCurrencyResponse != null) onAwardCurrencyResponse(methodCall.arguments);
+          if (onAwardCurrencyResponse != null)
+            onAwardCurrencyResponse!(methodCall.arguments);
           break;
         case 'onAwardCurrencyResponseFailure':
           if (onAwardCurrencyResponseFailure != null)
-            onAwardCurrencyResponseFailure(methodCall.arguments);
+            onAwardCurrencyResponseFailure!(methodCall.arguments);
           break;
         case 'onSpendCurrencyResponse':
           if (onSpendCurrencyResponse != null)
-            onSpendCurrencyResponse(methodCall.arguments);
+            onSpendCurrencyResponse!(methodCall.arguments);
           break;
         case 'onSpendCurrencyResponseFailure':
           if (onSpendCurrencyResponseFailure != null)
-            onSpendCurrencyResponseFailure(methodCall.arguments);
+            onSpendCurrencyResponseFailure!(methodCall.arguments);
           break;
         case 'onEarnedCurrency':
-          if (onEarnedCurrency != null) onEarnedCurrency(methodCall.arguments);
+          if (onEarnedCurrency != null) onEarnedCurrency!(methodCall.arguments);
           break;
         default:
       }
       return;
-    });
+    } as Future<dynamic> Function(MethodCall)?);
     _channel.invokeMethod('connect', {"tapjoyKey": tapjoyKey});
   }
 
@@ -82,14 +83,14 @@ class Tapjoy {
   }
 
   static Future<TJPlacement> getPlacement(String placementName,
-      {OnRequestSuccess onRequestSuccess,
-      OnRequestFailure onRequestFailure,
-      OnContentReady onContentReady,
-      OnContentShow onContentShow,
-      OnContentDismiss onContentDismiss,
-      OnPurchaseRequest onPurchaseRequest,
-      OnRewardRequest onRewardRequest,
-      OnClick onClick}) async {
+      {OnRequestSuccess? onRequestSuccess,
+      OnRequestFailure? onRequestFailure,
+      OnContentReady? onContentReady,
+      OnContentShow? onContentShow,
+      OnContentDismiss? onContentDismiss,
+      OnPurchaseRequest? onPurchaseRequest,
+      OnRewardRequest? onRewardRequest,
+      OnClick? onClick}) async {
     TJPlacement tjPlacement = new TJPlacement(placementName,
         onRequestSuccess: onRequestSuccess,
         onRequestFailure: onRequestFailure,
@@ -123,14 +124,16 @@ class Tapjoy {
     await _channel.invokeMethod('addUserTag', {'tag': tag});
   }
 
-  static void spendCurrency(int amount, {Function callOnSpendCurrencyResponse, Function callOnSpendCurrencyResponseFailure}) async {
+  static void spendCurrency(int amount,
+      {Function? callOnSpendCurrencyResponse,
+      Function? callOnSpendCurrencyResponseFailure}) async {
     onSpendCurrencyResponse = callOnSpendCurrencyResponse;
     onSpendCurrencyResponseFailure = callOnSpendCurrencyResponseFailure;
     await _channel.invokeMethod('spendCurrency', amount);
   }
 
-  static Future<bool> belowConsentAge(bool isBelowConsentAge) async {
-    bool belowConsentAge = await _channel.invokeMethod(
+  static Future<bool?> belowConsentAge(bool isBelowConsentAge) async {
+    bool? belowConsentAge = await _channel.invokeMethod(
         'belowConsentAge', {'belowConsentAge': isBelowConsentAge});
     return belowConsentAge;
   }
@@ -143,8 +146,8 @@ class Tapjoy {
     await _channel.invokeMethod('endSession');
   }
 
-  static Future<String> getSupportURL({String supportUrl}) async {
-    String supportURL;
+  static Future<String?> getSupportURL({String? supportUrl}) async {
+    String? supportURL;
     if (supportUrl == null) {
       supportURL = await _channel.invokeMethod('getSupportURL');
     } else {
@@ -154,18 +157,19 @@ class Tapjoy {
     return supportURL;
   }
 
-  static Future<String> getUserToken() async {
-    String userToken = await _channel.invokeMethod('getUserToken');
+  static Future<String?> getUserToken() async {
+    String? userToken = await _channel.invokeMethod('getUserToken');
     return userToken;
   }
 
-  static Future<bool> isLimitedConnected() async {
-    bool isLimitedConnected = await _channel.invokeMethod('isLimitedConnected');
+  static Future<bool?> isLimitedConnected() async {
+    bool? isLimitedConnected =
+        await _channel.invokeMethod('isLimitedConnected');
     return isLimitedConnected;
   }
 
-  static Future<bool> isPushNotificationDisabled() async {
-    bool isPushNotificationDisabled =
+  static Future<bool?> isPushNotificationDisabled() async {
+    bool? isPushNotificationDisabled =
         await _channel.invokeMethod('isPushNotificationDisabled');
     return isPushNotificationDisabled;
   }
@@ -191,8 +195,8 @@ class Tapjoy {
         .invokeMethod('setAppDataVersion', {'dataVersion': dataVersion});
   }
 
-  static Future<String> getVersion() async {
-    String version = await _channel.invokeMethod('getVersion');
+  static Future<String?> getVersion() async {
+    String? version = await _channel.invokeMethod('getVersion');
     return version;
   }
 
@@ -227,20 +231,20 @@ class Tapjoy {
     await _channel.invokeMethod('setUserLevel', {'userLevel': userLevel});
   }
 
-  static Future<bool> limitedConnect(String sdkKey,
-      {Function onLimitedConnectSuccessFunc,
-      Function onLimitedConnectFailureFunc}) async {
+  static Future<bool?> limitedConnect(String sdkKey,
+      {Function? onLimitedConnectSuccessFunc,
+      Function? onLimitedConnectFailureFunc}) async {
     // note return type.
     onLimitedConnectSuccess = onLimitedConnectSuccessFunc;
     onLimitedConnectFailure = onLimitedConnectFailureFunc;
-    bool limitedConnect =
+    bool? limitedConnect =
         await _channel.invokeMethod('limitedConnect', {'sdkKey': sdkKey});
     return limitedConnect;
   }
 
   static void getCurrencyBalance(
-      {Function onGetCurrencyBalanceResponseFunc,
-      Function onGetCurrencyBalanceResponseFailureFunc}) async {
+      {Function? onGetCurrencyBalanceResponseFunc,
+      Function? onGetCurrencyBalanceResponseFailureFunc}) async {
     onGetCurrencyBalanceResponse = onGetCurrencyBalanceResponseFunc;
     onGetCurrencyBalanceResponseFailure =
         onGetCurrencyBalanceResponseFailureFunc;
@@ -248,21 +252,22 @@ class Tapjoy {
   }
 
   static void awardCurrency(int amount,
-      {Function onAwardCurrencyResponseFunc,
-      Function onAwardCurrencyResponseFailureFunc}) async {
+      {Function? onAwardCurrencyResponseFunc,
+      Function? onAwardCurrencyResponseFailureFunc}) async {
     onAwardCurrencyResponse = onAwardCurrencyResponseFunc;
     onAwardCurrencyResponseFailure = onAwardCurrencyResponseFailureFunc;
     await _channel.invokeMethod('awardCurrency', {'amount': amount});
   }
 
-  static Future<TJPlacement> getLimitedPlacement(String placementName) async {
-    TJPlacement placement = await _channel
+  static Future<TJPlacement?> getLimitedPlacement(String placementName) async {
+    TJPlacement? placement = await _channel
         .invokeMethod('getLimitedPlacement', {'placementName': placementName});
     return placement;
     // remain implement callback.
   }
 
-  static void setEarnedCurrencyListener({Function onEarnedCurrencyFunc}) async {
+  static void setEarnedCurrencyListener(
+      {Function? onEarnedCurrencyFunc}) async {
     onEarnedCurrency = onEarnedCurrencyFunc;
     await _channel.invokeMethod('setEarnedCurrencyListener');
   }
@@ -273,11 +278,11 @@ class Tapjoy {
   }
 
   static void trackEvent(String name,
-      {int value,
-      String category,
-      String parameter1,
-      String parameter2,
-      Map values}) async {
+      {int? value,
+      String? category,
+      String? parameter1,
+      String? parameter2,
+      Map? values}) async {
     await _channel.invokeMethod('trackEvent', {
       'category': category,
       'name': name,

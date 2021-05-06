@@ -6,7 +6,7 @@ typedef void TapjoyRequestDidFaiListener();
 typedef void TapjoyContentIsReadyListener();
 typedef void TapjoyContentDidAppearListener();
 typedef void TapjoyContentDidDisappearListener();
-typedef void TapjoyDidRequestRewardListener(int quantity);
+typedef void TapjoyDidRequestRewardListener(int? quantity);
 
 class TapjoySwift {
   static TapjoySwift get instance => _instance;
@@ -20,12 +20,12 @@ class TapjoySwift {
     _channel.setMethodCallHandler(_platformCallHandler);
   }
 
-  static TapjoyRequestDidSucceedListener _tapjoyRequestDidSucceedListener;
-  static TapjoyRequestDidFaiListener _tapjoyRequestDidFaiListener;
-  static TapjoyContentIsReadyListener _tapjoyContentIsReadyListener;
-  static TapjoyContentDidAppearListener _tapjoyContentDidAppearListener;
-  static TapjoyContentDidDisappearListener _tapjoyContentDidDisappearListener;
-  static TapjoyDidRequestRewardListener _tapjoyDidRequestRewardListener;
+  static late TapjoyRequestDidSucceedListener _tapjoyRequestDidSucceedListener;
+  static late TapjoyRequestDidFaiListener _tapjoyRequestDidFaiListener;
+  static late TapjoyContentIsReadyListener _tapjoyContentIsReadyListener;
+  static late TapjoyContentDidAppearListener _tapjoyContentDidAppearListener;
+  static late TapjoyContentDidDisappearListener _tapjoyContentDidDisappearListener;
+  static late TapjoyDidRequestRewardListener _tapjoyDidRequestRewardListener;
 
   Future<void> setDebugEnabled(bool isDebug) async {
     try {

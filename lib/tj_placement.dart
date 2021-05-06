@@ -9,22 +9,22 @@ typedef void OnContentReady(TJPlacement tjPlacement);
 typedef void OnContentShow(TJPlacement tjPlacement);
 typedef void OnContentDismiss(TJPlacement tjPlacement);
 typedef void OnPurchaseRequest(TJPlacement tjPlacement,
-    TJActionRequest tjActionRequest, String productIds);
+    TJActionRequest tjActionRequest, String? productIds);
 typedef void OnRewardRequest(TJPlacement tjPlacement,
-    TJActionRequest tjActionRequest, String itemId, int quantity);
+    TJActionRequest tjActionRequest, String? itemId, int? quantity);
 typedef void OnClick(TJPlacement tjPlacement);
 
 class TJPlacement {
   String placementName = '';
-  static MethodChannel _channel;
-  OnRequestSuccess onRequestSuccess;
-  OnRequestFailure onRequestFailure;
-  OnContentReady onContentReady;
-  OnContentShow onContentShow;
-  OnContentDismiss onContentDismiss;
-  OnPurchaseRequest onPurchaseRequest;
-  OnRewardRequest onRewardRequest;
-  OnClick onClick;
+  static late MethodChannel _channel;
+  OnRequestSuccess? onRequestSuccess;
+  OnRequestFailure? onRequestFailure;
+  OnContentReady? onContentReady;
+  OnContentShow? onContentShow;
+  late OnContentDismiss onContentDismiss;
+  OnPurchaseRequest? onPurchaseRequest;
+  OnRewardRequest? onRewardRequest;
+  OnClick? onClick;
 
   TJPlacement(this.placementName,
       {this.onRequestSuccess,
@@ -40,29 +40,29 @@ class TJPlacement {
 
   Future<Null> _handle(MethodCall call) async {
     if (call.method == 'onRequestSuccess') {
-      onRequestSuccess(this);
+      onRequestSuccess!(this);
     } else if (call.method == 'onRequestFailure') {
-      onRequestFailure(
+      onRequestFailure!(
         this,
         TJError(
             errorCode: call.arguments('code'),
             errorMessage: call.arguments('message')),
       );
     } else if (call.method == 'onContentReady') {
-      if (onContentReady != null) onContentReady(this);
+      if (onContentReady != null) onContentReady!(this);
     } else if (call.method == 'onContentShow') {
-      onContentShow(this);
+      onContentShow!(this);
     } else if (call.method == 'onContentDismiss') {
       onContentDismiss(this);
     } else if (call.method == 'onPurchaseRequest') {
-      String productId = call.arguments('productId');
-      onPurchaseRequest(this, ActionRequest(call), productId);
+      String? productId = call.arguments('productId');
+      onPurchaseRequest!(this, ActionRequest(call), productId);
     } else if (call.method == 'onRewardRequest') {
-      String itemId = call.arguments('itemId');
-      int quantity = call.arguments('quantity');
-      onRewardRequest(this, ActionRequest(call), itemId, quantity);
+      String? itemId = call.arguments('itemId');
+      int? quantity = call.arguments('quantity');
+      onRewardRequest!(this, ActionRequest(call), itemId, quantity);
     } else if (call.method == 'onClick') {
-      onClick(this);
+      onClick!(this);
     }
   }
 
@@ -77,7 +77,7 @@ class TJPlacement {
   }
 
   Future<void> requestContent() async {
-    if (await Tapjoy.isConnected()) {
+    if (await (Tapjoy.isConnected())) {
       await _channel.invokeMethod('requestContent');
     } else {
       print('content not ready');
@@ -85,7 +85,7 @@ class TJPlacement {
   }
 
   Future<void> showContent() async {
-    if (await this.isContentAvailable() || await this.isContentReady()) {
+    if (await (this.isContentAvailable()) || await (this.isContentReady())) {
       await _channel.invokeMethod('showContent');
     } else {
       print('no content to show, or it has not yet downloaded');
@@ -105,41 +105,41 @@ class TJPlacement {
         .invokeMethod('setAdapterVersion', {'adapterVersion': adapterVersion});
   }
 
-  Future<bool> isLimited() async {
-    bool isLimited = await _channel.invokeMethod('isLimited');
+  Future<bool?> isLimited() async {
+    bool? isLimited = await _channel.invokeMethod('isLimited');
     return isLimited;
   }
 
-  Future<String> getName() async {
-    String name = await _channel.invokeMethod('getName');
+  Future<String?> getName() async {
+    String? name = await _channel.invokeMethod('getName');
     return name;
   }
 
-  Future<String> getGUID() async {
-    String guid = await _channel.invokeMethod('getGUID');
+  Future<String?> getGUID() async {
+    String? guid = await _channel.invokeMethod('getGUID');
     return guid;
   }
 
   Future<void> setVideoListener(
-      {Function onVideoStart,
-      Function onVideoError,
-      Function onVideoComplete}) async {
+      {Function? onVideoStart,
+      Function? onVideoError,
+      Function? onVideoComplete}) async {
     await _channel.invokeMethod('setVideoListener');
     _channel.setMethodCallHandler((methodCall) {
       switch (methodCall.method) {
         case 'onVideoStart':
-          onVideoStart();
+          onVideoStart!();
           break;
         case 'onVideoError':
-          onVideoError();
+          onVideoError!();
           break;
         case 'onVideoComplete':
-          onVideoComplete();
+          onVideoComplete!();
           break;
         default:
       }
       return;
-    });
+    } as Future<dynamic> Function(MethodCall)?);
   }
 
   // This Functions Not Implementted Uptil Now.
@@ -161,12 +161,12 @@ class ActionRequest implements TJActionRequest {
   MethodCall call;
   ActionRequest(this.call);
   @override
-  String getToken() {
+  String? getToken() {
     return call.arguments('token');
   }
 
   @override
-  String getRequestId() {
+  String? getRequestId() {
     return call.arguments('requestId');
   }
 
