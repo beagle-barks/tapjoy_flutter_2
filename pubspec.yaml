@@ -1,11 +1,11 @@
 name: flutter_tapjoy
 description: A plugin for Tapjoy for both Android & iOS 
-version: 2.0.0
+version: 3.0.0
 homepage: https://github.com/beagle-barks/flutter_tapjoy
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
-  flutter: ">=1.10.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
